@@ -1,6 +1,6 @@
-####Author: Juho Taipale
+#### Author: Juho Taipale
 # showcase app that simulates cars and trafficlights at intersection
-###Running the app
+### Running the app
 go to root directory and type:
 python graphics.py
 
