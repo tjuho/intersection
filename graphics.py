@@ -6,8 +6,8 @@ from lane import Lane
 UPDATE_RATE = 0.1
 SPEEDMULTIPLIER = 2
 ZOOM = 2
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 SCREEN_TITLE = "Intersection   author Juho Taipale"
 colors = [arcade.color.BLEU_DE_FRANCE, arcade.color.WHITE,
           arcade.color.ORANGE, arcade.color.OLIVE]
@@ -22,18 +22,13 @@ class Graphics(arcade.Window):
 
     def __init__(self):
         self.simulation = DummylightsTwoCrossings()
-        ux, uy, lx, ly = self.simulation.world.getBoundingBox()
-        self.offsetx = lx
-        self.offsety = ly
-        self.screenwidth = ux - lx
-        self.sreenheight = uy - ly
-        self.zoom = min(SCREEN_WIDTH / (ux - lx), SCREEN_HEIGHT / (uy - ly))
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, update_rate=UPDATE_RATE)
+        self._setZoomParameters(SCREEN_WIDTH, SCREEN_HEIGHT)
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, update_rate=UPDATE_RATE, resizable=True)
         arcade.set_background_color(arcade.color.BLACK)
         self.debugTextOffsets = [0 for x in range(10)]
-        lanes = self.simulation.world.getLanes()
-        self.lanewidth =lanes[0].width # useful when drawing traffic lights
-        self.laneShapeElementList = self.getLaneShapesElementList(lanes)
+        self.lanes = self.simulation.world.getLanes()
+        self.lanewidth =self.lanes[0].width # useful when drawing traffic lights
+        self.laneShapeElementList = self.getLaneShapesElementList(self.lanes)
         pass
 
     def setup(self):
@@ -55,6 +50,21 @@ class Graphics(arcade.Window):
     def on_update(self, delta_time: float):
         self.simulation.moveTimestep(delta_time * SPEEDMULTIPLIER)
         arcade.pause(delta_time / 50)
+
+    def on_resize(self, width, height):
+        print('resize', width, height)
+        super().on_resize(width, height)
+        self._setZoomParameters(width, height)
+        self.laneShapeElementList = self.getLaneShapesElementList(self.lanes)
+
+
+    def _setZoomParameters(self, width, height):
+        ux, uy, lx, ly = self.simulation.world.getBoundingBox()
+        self.offsetx = lx
+        self.offsety = ly
+        self.screenwidth = ux - lx
+        self.sreenheight = uy - ly
+        self.zoom = min(width / (ux - lx), height / (uy - ly))
 
     def getStraightShapeWithCoordinationChange(self, startx, starty, endx, endy, linewidth, color):
         return arcade.create_line((startx - self.offsetx) * self.zoom, (starty - self.offsety) * self.zoom,
