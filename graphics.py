@@ -52,7 +52,6 @@ class Graphics(arcade.Window):
         arcade.pause(delta_time / 50)
 
     def on_resize(self, width, height):
-        print('resize', width, height)
         super().on_resize(width, height)
         self._setZoomParameters(width, height)
         self.laneShapeElementList = self.getLaneShapesElementList(self.lanes)
