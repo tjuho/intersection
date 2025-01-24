@@ -50,7 +50,7 @@ class DummylightsTwoCrossings(Simulation):
 
     def to_dict(self):
         return {
-            "setup": self.setup,
+            "timeToTrafficlightControllerStateChange": self.timeToTrafficlightControllerStateChange,
             "routeCarSpawn": self.routeCarSpawn,
         }
 

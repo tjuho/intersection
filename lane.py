@@ -91,6 +91,17 @@ class CurvedLane(Lane):
                          speedLimit)
         self.type = 'arc'
 
+
+    def to_dict(self):
+        return {
+            "startAngle": self.startAngle,
+            "endAngle": self.endAngle,
+            "radians": self.radians,
+            "isClockwise": self.isClockwise,
+            "radius": self.radius,
+            "type": self.type,
+        }
+
     @classmethod
     def continueLane(cls, lane: Lane, endDirection, radius, isClockwise, speedLimit=None):
         return cls(lane.endx, lane.endy, lane.endDirection, endDirection, radius, lane.width, isClockwise,
@@ -177,8 +188,13 @@ class StraightLane(Lane):
         centerx = (endx + startx) * 0.5
         centery = (endy + starty) * 0.5
         super().__init__(startx, starty, endx, endy, centerx, centery, length, width, direction, direction, speedLimit)
-        self.limitingLines = []
+        # self.limitingLines = []
         self.type = 'line'
+
+    def to_dict(self):
+        return {
+            "type": self.type,
+        }
 
     @classmethod
     def continueLane(cls, lane: Lane, length, speedLimit=None):
