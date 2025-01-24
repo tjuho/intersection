@@ -13,7 +13,7 @@ class Route:
 
     def to_dict(self):
         return {
-            "lanes": self.lanes,
+            "lanes": [lanes.to_dict() for lanes in self.lanes],
             "totalTravelDistance": self.totalTravelDistance,
         }
 

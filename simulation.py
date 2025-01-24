@@ -20,9 +20,9 @@ class Simulation:
 
     def to_dict(self):
         return {
-            "world": self.world,
-            "ai": self.ai,
-            "trafficlightControllers": self.trafficlightControllers,
+            "world": self.world.to_dict(),
+            "ai": self.ai.to_dict(),
+            "trafficlightControllers": [controller.to_dict() for controller in self.trafficlightControllers],
             "laneInputs": self.laneInputs,
             "sensors": self.sensors,
         }

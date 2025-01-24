@@ -17,8 +17,8 @@ class AI:
 
     def to_dict(self):
         return {
-            "world": self.world,
-            "_carAiContainer": self._carAiContainer,
+            "world": self.world.to_dict(),
+            "_carAiContainer": self._carAiContainer.to_dict(),
             "debug": self.debug,
         }
 

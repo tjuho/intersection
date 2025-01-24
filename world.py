@@ -21,8 +21,28 @@ class World:
 
     def to_dict(self):
         return {
-            "routes": self.routes,
-            "sensorsFired": self.sensorsFired,
+            "routes": {
+                str(route): {
+                    "cars": [car.to_dict() for car in route_data["cars"]],
+                    "trafficlights": [
+                        {
+                            "trafficlight": trafficlight.to_dict(),
+                            "distanceFromStart": distance,
+                            "location": location,
+                        }
+                        for trafficlight, distance, location in route_data["trafficlights"]
+                    ],
+                    "sensors": [
+                        {
+                            "sensor": sensor.to_dict(),
+                            "distanceFromStart": distance,
+                        }
+                        for sensor, distance in route_data["sensors"]
+                    ],
+                }
+                for route, route_data in self.routes.items()
+            },
+            "sensorsFired": [sensor.to_dict() for sensor in self.sensorsFired],
             "sensorRouteDistances": self.sensorRouteDistances,
         }
 

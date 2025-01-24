@@ -16,7 +16,7 @@ class TrafficlightController:
     def to_dict(self):
         return {
             "matrix": self.matrix,
-            "trafficlights": self.trafficlights,
+            "trafficlights": [trafficlights.to_dict() for trafficlights in self.trafficlights],
             "index": self.index,
         }
 

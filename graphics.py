@@ -33,10 +33,10 @@ class Graphics(arcade.Window):
 
     def to_dict(self):
         return {
-            "simulation": self.simulation,
+            "simulation": self.simulation.to_dict(),
             "_setZoomParameters": self._setZoomParameters,
             "debugTextOffsets": self.debugTextOffsets,
-            "lanes": self.lanes,
+            "lanes": [lanes.to_dict() for lanes in self.lanes],
             "lanewidth": self.lanewidth,
             "laneShapeElementList": self.laneShapeElementList,
         }
