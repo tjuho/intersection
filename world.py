@@ -19,6 +19,13 @@ class World:
         self.sensorsFired = []
         self.sensorRouteDistances = {}  # indexing a bit here
 
+    def to_dict(self):
+        return {
+            "routes": self.routes,
+            "sensorsFired": self.sensorsFired,
+            "sensorRouteDistances": self.sensorRouteDistances,
+        }
+
     def moveTimestep(self, timestep):
         carsToRemove = []
         for route in self.routes.keys():

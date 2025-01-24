@@ -26,6 +26,24 @@ class Car:
 
         self.debug = None
 
+    def to_dict(self):
+        return {
+            "maxSpeed": self.maxSpeed,
+            "width": self.width,
+            "length": self.length,
+            "halflength": self.halflength,
+            "color": self.color,
+            "name": self.name,
+            "preferredAcceleration": self.preferredAcceleration,
+            "preferredDeceleration": self.preferredDeceleration,
+            "initialSpeed": self.initialSpeed,
+            "time": self.time,
+            "distance": self.distance,
+            "timeFromLastSpeedChange": self.timeFromLastSpeedChange,
+            "zeromargin": self.zeromargin,
+            "speedItems": self.speedItems,
+        }
+
     def moveTimestep(self, timestep):
         if timestep == 0: return
         self.distance += self.getTravelDistance(timestep)

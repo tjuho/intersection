@@ -18,6 +18,22 @@ class Lane:
         self.type = None
         self.speedLimit = speedLimit
 
+    def to_dict(self):
+        return {
+            "startx": self.startx,
+            "starty": self.starty,
+            "endx": self.endx,
+            "endy": self.endy,
+            "centerx": self.centerx,
+            "centery": self.centery,
+            "length": self.length,
+            "width": self.width,
+            "startDirection": self.startDirection,
+            "endDirection": self.endDirection,
+            "type": self.type,
+            "speedLimit": self.speedLimit,
+        }
+
     def coordinates(self, distance):
         if distance > self.length:
             return None, None

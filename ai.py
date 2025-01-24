@@ -15,6 +15,13 @@ class AI:
         self.debug['stack'] = {}
         self.debug['stack']['last added'] = ''
 
+    def to_dict(self):
+        return {
+            "world": self.world,
+            "_carAiContainer": self._carAiContainer,
+            "debug": self.debug,
+        }
+
     def adjust(self):
         for route in self.world.getRoutes():
             self._adjustRoute(route)
@@ -563,6 +570,15 @@ class CarAIContainer:
         self.spottedTrafficlightDict = {}
         self.spottedCarDict = {}
         self.currentTarget = {}  # type is {Car: Object}
+
+    def to_dict(self):
+        return {
+            "accelerations": self.targetCarDict,
+            "targetTrafficlightDict": self.targetTrafficlightDict,
+            "spottedTrafficlightDict": self.spottedTrafficlightDict,
+            "spottedCarDict": self.spottedCarDict,
+            "currentTarget": self.currentTarget,
+        }
 
     def setCurrentTarget(self, car: Car, target):
         self.currentTarget[car] = target

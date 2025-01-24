@@ -5,6 +5,14 @@ class Trafficlight:
         self.yellowTime = yellowTime
         self.redToGreenDelay = redtogreendelay
 
+    def to_dict(self):
+        return {
+            "color": self.color,
+            "timeToNextColorChange": self.timeToNextColorChange,
+            "yellowTime": self.yellowTime,
+            "redToGreenDelay": self.redToGreenDelay,
+        }
+
     def turnRed(self):
         if self.color == 'green':
             self.switch()

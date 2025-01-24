@@ -9,6 +9,12 @@ class SpeedChange:
         self.initialspeed = initialspeed
         pass
 
+    def to_dict(self):
+        return {
+            "accelerations": self.accelerations,
+            "initialspeed": self.initialspeed,
+        }
+
     def addAcceleration(self, acceleration, duration, offsettime=0.0):
         duration = max(duration, 0)
         idx = 0

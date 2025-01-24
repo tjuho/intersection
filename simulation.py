@@ -18,6 +18,15 @@ class Simulation:
         self.laneInputs = []
         self.sensors = []
 
+    def to_dict(self):
+        return {
+            "world": self.world,
+            "ai": self.ai,
+            "trafficlightControllers": self.trafficlightControllers,
+            "laneInputs": self.laneInputs,
+            "sensors": self.sensors,
+        }
+
     def moveTimestep(self, timestep):
         self.updateWorldState(timestep)
         self.ai.adjust()
@@ -38,6 +47,12 @@ class DummylightsTwoCrossings(Simulation):
         self.timeToTrafficlightControllerStateChange = [randint(15, 60), randint(15, 60)]
         self.routeCarSpawn = {}
         self.setup()
+
+    def to_dict(self):
+        return {
+            "setup": self.setup,
+            "routeCarSpawn": self.routeCarSpawn,
+        }
 
     def setup(self):
         redtogreendelay = 3

@@ -13,6 +13,13 @@ class TrafficlightController:
         self.index = 0
         self.setIndex(0)
 
+    def to_dict(self):
+        return {
+            "matrix": self.matrix,
+            "trafficlights": self.trafficlights,
+            "index": self.index,
+        }
+
     def checkSystemMatreix(self, trafficlights, systemmatrix):
         for row in systemmatrix:
             assert (len(row) == len(trafficlights))

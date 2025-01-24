@@ -11,6 +11,12 @@ class Route:
         self.lanes = lanes
         self.totalTravelDistance = sum([x.length for x in lanes])
 
+    def to_dict(self):
+        return {
+            "lanes": self.lanes,
+            "totalTravelDistance": self.totalTravelDistance,
+        }
+
     def addLane(self, lane):
         if lane not in self.lanes:
             self.lanes.append(lane)

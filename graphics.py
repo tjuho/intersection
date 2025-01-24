@@ -31,6 +31,16 @@ class Graphics(arcade.Window):
         self.laneShapeElementList = self.getLaneShapesElementList(self.lanes)
         pass
 
+    def to_dict(self):
+        return {
+            "simulation": self.simulation,
+            "_setZoomParameters": self._setZoomParameters,
+            "debugTextOffsets": self.debugTextOffsets,
+            "lanes": self.lanes,
+            "lanewidth": self.lanewidth,
+            "laneShapeElementList": self.laneShapeElementList,
+        }
+
     def setup(self):
         arcade.draw_point(100,100, arcade.color.ORANGE, 50)
         pass
