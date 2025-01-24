@@ -23,21 +23,21 @@ class World:
         return {
             "routes": {
                 str(route): {
-                    "cars": [car.to_dict() for car in route_data["cars"]],
+                    "cars": [car.to_dict() for car in route_data.get("cars", [])],
                     "trafficlights": [
                         {
                             "trafficlight": trafficlight.to_dict(),
                             "distanceFromStart": distance,
                             "location": location,
                         }
-                        for trafficlight, distance, location in route_data["trafficlights"]
+                        for trafficlight, distance, location in route_data.get("trafficlights", [])
                     ],
                     "sensors": [
                         {
                             "sensor": sensor.to_dict(),
                             "distanceFromStart": distance,
                         }
-                        for sensor, distance in route_data["sensors"]
+                        for sensor, distance in route_data.get("sensors", [])
                     ],
                 }
                 for route, route_data in self.routes.items()
@@ -45,7 +45,6 @@ class World:
             "sensorsFired": [sensor.to_dict() for sensor in self.sensorsFired],
             "sensorRouteDistances": self.sensorRouteDistances,
         }
-
     def moveTimestep(self, timestep):
         carsToRemove = []
         for route in self.routes.keys():
