@@ -18,16 +18,22 @@ simulation = DummylightsTwoCrossings()
 @app.route('/api/simulation', methods=['GET'])
 def get_simulation_data():
     try:
-        return jsonify(simulation.to_dict())
+        data = simulation.to_dict()
+        return jsonify(data)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.error(f"Error in get_simulation_data: {e}", exc_info=True)
+        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+
 
 @app.route('/api/simulation/update', methods=['POST'])
 def update_simulation():
-    timestep = 0.2
-    simulation.moveTimestep(timestep)
-    return jsonify({"message": "Simulation updated", "timestep": timestep})
-
+    try:
+        timestep = 0.2
+        simulation.moveTimestep(timestep)
+        return jsonify({"message": "Simulation updated", "timestep": timestep})
+    except Exception as e:
+        app.logger.error(f"Error in update_simulation: {e}", exc_info=True)
+        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
 # @app.route('/api/simulation', methods=['GET'])
 # def get_simulation_data():
