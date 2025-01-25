@@ -106,8 +106,26 @@ class DummylightsTwoCrossings(Simulation):
         self.world.addRoute(route3a)
         self.world.addRoute(route3b)
 
-        # Initialize traffic lights and controllers as before...
-
+        tl1a1 = Trafficlight(redtogreendelay, yellowtime, 'green')
+        tl1a2 = Trafficlight(redtogreendelay, yellowtime, 'green')
+        tl1b1 = Trafficlight(redtogreendelay, yellowtime, 'green')
+        tl1b2 = Trafficlight(redtogreendelay, yellowtime, 'green')
+        tl2a = Trafficlight(redtogreendelay, yellowtime, 'red')
+        tl2b = Trafficlight(redtogreendelay, yellowtime, 'red')
+        tl3a = Trafficlight(redtogreendelay, yellowtime, 'red')
+        tl3b = Trafficlight(redtogreendelay, yellowtime, 'red')
+        self.trafficlightControllers.append(
+            TrafficlightController([tl1a1, tl1b2, tl2a, tl2b], [[1, 1, 0, 0], [0, 0, 1, 1]]))
+        self.trafficlightControllers.append(
+            TrafficlightController([tl1a2, tl1b1, tl3a, tl3b], [[1, 1, 0, 0], [0, 0, 1, 1]]))
+        self.world.addTrafficlight(tl1a1, lane1a1, lanelength * 0.5 - trafficlightmargin)
+        self.world.addTrafficlight(tl1a2, lane1a2, lanelength * 0.5 - trafficlightmargin)
+        self.world.addTrafficlight(tl1b1, lane1b1, lanelength * 0.5 - trafficlightmargin)
+        self.world.addTrafficlight(tl1b2, lane1b2, lanelength * 0.5 - trafficlightmargin)
+        self.world.addTrafficlight(tl2a, lane2a, lanelength * 0.5 - trafficlightmargin)
+        self.world.addTrafficlight(tl2b, lane2b, lanelength * 0.5 - trafficlightmargin)
+        self.world.addTrafficlight(tl3a, lane3a, lanelength * 0.5 - trafficlightmargin)
+        self.world.addTrafficlight(tl3b, lane3b, lanelength * 0.5 - trafficlightmargin)
         self.setupSpawntimes()
 
     def setupSpawntimes(self):
