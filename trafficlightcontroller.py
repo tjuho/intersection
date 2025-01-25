@@ -1,5 +1,5 @@
 from trafficlight import Trafficlight
-
+import uuid
 '''The logic how traffic lights switch in one intersection'''
 
 
@@ -7,6 +7,7 @@ class TrafficlightController:
     '''@systemmatrix shows which trafficlights are on or off at each state'''
 
     def __init__(self, trafficlights: [Trafficlight], systemsmatrix):
+        self.id = str(uuid.uuid4())
         self.checkSystemMatreix(trafficlights, systemsmatrix)
         self.matrix = systemsmatrix
         self.trafficlights = trafficlights
@@ -15,6 +16,7 @@ class TrafficlightController:
 
     def to_dict(self):
         return {
+            "id": self.id,
             "matrix": self.matrix,
             "trafficlights": [trafficlights.to_dict() for trafficlights in self.trafficlights],
             "index": self.index,

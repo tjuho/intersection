@@ -1,5 +1,7 @@
+import uuid
 class Trafficlight:
     def __init__(self, yellowTime: float, redtogreendelay: float, color='green'):
+        self.id = str(uuid.uuid4())
         self.color = color
         self.timeToNextColorChange = None
         self.yellowTime = yellowTime

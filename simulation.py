@@ -6,12 +6,13 @@ from car import Car
 from trafficlightcontroller import TrafficlightController
 from route import Route
 from random import randint
-
+import uuid
 '''Simulations that control the traffic lights and car spawning'''
 
 
 class Simulation:
     def __init__(self):
+        self.id = str(uuid.uuid4())
         self.world = World()
         self.ai = AI(self.world)
         self.trafficlightControllers = []
@@ -20,6 +21,7 @@ class Simulation:
 
     def to_dict(self):
         return {
+            "id": self.id,
             "world": self.world.to_dict(),
             "ai": self.ai.to_dict(),
             "trafficlightControllers": [controller.to_dict() for controller in self.trafficlightControllers],

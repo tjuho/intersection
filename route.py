@@ -1,6 +1,6 @@
 from lane import Lane
 from functools import reduce
-
+import uuid
 
 def sumTwo(a, b):
     return a + b
@@ -8,11 +8,13 @@ def sumTwo(a, b):
 
 class Route:
     def __init__(self, lanes: [Lane]):
+        self.id = str(uuid.uuid4())
         self.lanes = lanes
         self.totalTravelDistance = sum([x.length for x in lanes])
 
     def to_dict(self):
         return {
+            "id": self.id,
             "lanes": [lanes.to_dict() for lanes in self.lanes],
             "totalTravelDistance": self.totalTravelDistance,
         }

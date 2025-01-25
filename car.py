@@ -1,12 +1,13 @@
 from speedchange import SpeedChange
 import math
-
+import uuid
 '''Car state and movement'''
 
 
 class Car:
     def __init__(self, initialspeed=0.0, color='orange', width=1.8, length=4, preferredAcceleration=1.7,
                  preferredDeceleration=-1.9, maxSpeedKmh=170, name='car'):
+        self.id = str(uuid.uuid4())
         self.maxSpeed = maxSpeedKmh / 3.6
         self.width = width
         self.length = length
@@ -28,6 +29,7 @@ class Car:
 
     def to_dict(self):
         return {
+            "id": self.id,
             "maxSpeed": self.maxSpeed,
             "width": self.width,
             "length": self.length,

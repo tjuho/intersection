@@ -1,10 +1,11 @@
 import math
-
+import uuid
 
 class Lane:
     def __init__(self, startx: float, starty: float, endx: float, endy: float,
                  centerx: float, centery: float, length: float, width: float, startDirection: float,
                  endDirection: float, speedLimit: float):
+        self.id = str(uuid.uuid4())
         self.startx = startx
         self.starty = starty
         self.endx = endx
@@ -20,6 +21,7 @@ class Lane:
 
     def to_dict(self):
         return {
+            "id": self.id,
             "startx": self.startx,
             "starty": self.starty,
             "endx": self.endx,

@@ -1,16 +1,18 @@
 '''Halds the possible speed change for a cars'''
-
+import uuid
 
 class SpeedChange:
 
     def __init__(self, initialspeed: float):
         # (acceleraiton, duration)
+        self.id = str(uuid.uuid4())
         self.accelerations = []
         self.initialspeed = initialspeed
         pass
 
     def to_dict(self):
         return {
+            "id": self.id,
             "accelerations": self.accelerations,
             "initialspeed": self.initialspeed,
         }

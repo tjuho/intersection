@@ -2,7 +2,7 @@ from lane import Lane
 from car import Car
 from route import Route
 from trafficlight import Trafficlight
-
+import uuid
 '''Stores all the stuff in the world'''
 
 
@@ -15,12 +15,14 @@ class World:
         'trafficlights': [(Trafficlight, distanceFromStart, (x,y,direction))],
         'sensors': [(Sensor, distanceFromStart)]}
         '''
+        self.id = str(uuid.uuid4())
         self.routes = {}
         self.sensorsFired = []
         self.sensorRouteDistances = {}  # indexing a bit here
 
     def to_dict(self):
         return {
+            "id": self.id,
             "routes": {
                 str(route): {
                     "cars": [car.to_dict() for car in route_data.get("cars", [])],

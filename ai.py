@@ -3,12 +3,13 @@ from world import World
 from route import Route
 from trafficlight import Trafficlight
 from car import Car, SpeedChange
-
+import uuid
 
 class AI:
     '''Car logic'''
 
     def __init__(self, world: World):
+        self.id = str(uuid.uuid4())
         self.world = world
         self._carAiContainer = CarAIContainer()
         self.debug = {}
@@ -265,7 +266,7 @@ class AI:
 
     '''
     Calculates mid speed with equal acceleration and deceleration (a2 == -a1).
-    The mid speed needs to be lower than initial speed and target speed. e.g. \/.
+    The mid speed needs to be lower than initial speed and target speed.
     vm < vi and vm < vt. 
     The resulting speed profile is of equal time as the time to target speed @t. This ensures that there is no
     overtaking when adjust to the car in front
@@ -395,8 +396,8 @@ class AI:
         return None
 
     '''
-    Calculates the constant speed time for function that accelerates then constant speed and then acceleration again.
-    The speed function may look like /-\. The max speed (speed limit) vl >= vt and vl >= vi
+    Calculates the constant speed time for function that accelerates then constant speed and then decelerate.
+    The max speed (speed limit) vl >= vt and vl >= vi
     '''
 
     def _calculateConstantSpeedTimeBetweenAccelerations(self, vi, vt, vl, d, a1, a2):
@@ -408,8 +409,8 @@ class AI:
         return tc
 
     '''
-    Calculates the constant speed time for function that accelerates then constant speed and then acceleration again.
-    The speed function looks like /-\. The max speed (speed limit) vl >= vt and vl >= vi. 
+    Calculates the constant speed time for function that accelerates then constant speed and then decelerate.
+    The max speed (speed limit) vl >= vt and vl >= vi. 
     @t is time to target speed
     '''
 
@@ -513,7 +514,7 @@ class AI:
         return result
 
     '''
-    Calculates constant low speed for profile \_/ 
+    Calculates constant low speed for profile. The speed profile is decelerate, constant speed and accelerate
     Value error might indicate that you need to stop
     '''
 
@@ -565,6 +566,7 @@ class AI:
 
 class CarAIContainer:
     def __init__(self):
+        self.id = str(uuid.uuid4())
         self.targetCarDict = {}  # type is {Car: Car}
         self.targetTrafficlightDict = {}  # {Car: Trafficlight}
         self.spottedTrafficlightDict = {}
@@ -573,6 +575,7 @@ class CarAIContainer:
 
     def to_dict(self):
         return {
+            "id": self.id,
             "accelerations": self.targetCarDict,
             "targetTrafficlightDict": self.targetTrafficlightDict,
             "spottedTrafficlightDict": self.spottedTrafficlightDict,
