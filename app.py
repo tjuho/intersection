@@ -20,7 +20,7 @@ simulation = DummylightsTwoCrossings()
 @app.route('/api/simulation', methods=['GET'])
 def get_simulation_data():
     try:
-        pdb.set_trace()  # Set a breakpoint
+        # pdb.set_trace()  # Set a breakpoint
         data = simulation.to_dict()
         return jsonify(data)
     except Exception as e:

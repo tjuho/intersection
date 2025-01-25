@@ -24,10 +24,9 @@ class World:
         return {
             "id": self.id,
             "routes": [route.to_dict() for route in self.routes.keys()],
-            "trafficlights": [trafficlight.to_dict() for trafficlight in self.getTrafficlights()],
-            "cars": [car.to_dict() for car in self.getAllCars()],
             "lanes": [lane.to_dict() for lane in self.getLanes()],
             "trafficlightsLocationsAndDirections": self.getTrafficlightsLocationsAndDirections(),
+            "carsLocationsAndDirections": self.getCarsLocationsAndDirections(),
             "sensorsFired": [sensor.to_dict() for sensor in self.sensorsFired],
             "sensorRouteDistances": self.sensorRouteDistances,  # Ensure this is serializable
         }
@@ -168,14 +167,16 @@ class World:
     def getAllCars(self):
         result = []
         for route in self.routes.keys():
-            temp = [x for x in route.cars if x not in result]
+            if 'cars' not in self.routes[route].keys(): continue
+            temp = [x for x in self.routes[route]['cars'] if x not in result]
             result.extend(temp)
         return result
 
     def getTrafficlights(self):
         result = []
         for route in self.routes.keys():
-            temp = [x for x in route.trafficlights if x not in result]
+            if 'trafficlights' not in self.routes[route].keys(): continue
+            temp = [x for x in self.routes[route]['trafficlights'] if x not in result]
             result.extend(temp)
         return result
 
@@ -258,7 +259,8 @@ class World:
     def getTrafficlightsLocationsAndDirections(self):
         result = []
         for route in self.routes:
-            for trafficlight, distance, location in route.trafficlights:
+            if 'trafficlights' not in self.routes[route].keys(): continue
+            for trafficlight, distance, location in self.routes[route]['trafficlights']:
                 if trafficlight is None:
                     continue  # Skip if trafficlight is None
                 x, y, d = location
