@@ -1,5 +1,6 @@
 import json
 from flask import Flask, jsonify
+from flask_cors import CORS  # Import CORS
 from simulation import DummylightsTwoCrossings  # Your simulation file
 from trafficlight import Trafficlight
 class CustomJSONEncoder(json.JSONEncoder):
@@ -9,6 +10,7 @@ class CustomJSONEncoder(json.JSONEncoder):
         return super().default(obj)
 
 app = Flask(__name__)
+CORS(app)
 app.json_encoder = CustomJSONEncoder
 
 simulation = DummylightsTwoCrossings()
