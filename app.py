@@ -13,9 +13,6 @@ app.json_encoder = CustomJSONEncoder
 
 simulation = DummylightsTwoCrossings()
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
 # @app.route('/api/simulation')
 # def get_simulation_data():
 #     return jsonify(simulation.to_dict())
@@ -30,6 +27,9 @@ def get_simulation_data():
     pprint.pprint(simulation_dict)
 
     return jsonify(simulation_dict)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 # @app.route('/api/simulation')
 # def get_simulation_data():
