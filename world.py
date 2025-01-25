@@ -44,9 +44,12 @@ class World:
                 }
                 for route, route_data in self.routes.items()
             },
+            "lanes": [lane.to_dict() for lane in self.getLanes()],
+            "trafficlightsLocationsAndDirections": self.getTrafficlightsLocationsAndDirections(),
             "sensorsFired": [sensor.to_dict() for sensor in self.sensorsFired],
             "sensorRouteDistances": self.sensorRouteDistances,
         }
+
     def moveTimestep(self, timestep):
         carsToRemove = []
         for route in self.routes.keys():
@@ -256,8 +259,14 @@ class World:
                 continue
             trafficlightitems = self.routes[route]['trafficlights']
             for trafficlight, distance, location in trafficlightitems:
-                x, y, direction = location
-                result.append((trafficlight, x, y, direction))
+                x, y, d = location
+                trafficlight_info = {
+                    "trafficlight": trafficlight.to_dict(),
+                    "x": x,
+                    "y": y,
+                    "d": d
+                }
+                result.append(trafficlight_info)
         return result
 
     def getBoundingBox(self):
