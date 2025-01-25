@@ -13,20 +13,23 @@ app.json_encoder = CustomJSONEncoder
 
 simulation = DummylightsTwoCrossings()
 
-# @app.route('/api/simulation')
-# def get_simulation_data():
-#     return jsonify(simulation.to_dict())
-
 @app.route('/api/simulation', methods=['GET'])
 def get_simulation_data():
-    simulation = DummylightsTwoCrossings()  # Replace with your actual method to get the simulation
-    simulation_dict = simulation.to_dict()
+    try:
+        return jsonify(simulation.to_dict())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    # Temporary debugging
-    import pprint
-    pprint.pprint(simulation_dict)
-
-    return jsonify(simulation_dict)
+# @app.route('/api/simulation', methods=['GET'])
+# def get_simulation_data():
+#     simulation = DummylightsTwoCrossings()  # Replace with your actual method to get the simulation
+#     simulation_dict = simulation.to_dict()
+#
+#     # Temporary debugging
+#     import pprint
+#     pprint.pprint(simulation_dict)
+#
+#     return jsonify(simulation_dict)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
