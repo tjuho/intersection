@@ -69,6 +69,8 @@ class MyTestCase(unittest.TestCase):
         json_data = json.dumps(trafficlightController_dict, indent=4)
         print(json_data)
 
+        trafficlight = Trafficlight(color="green", yellowTime=1, redtogreendelay=1)
+        print(trafficlight.to_dict())
 
 
 if __name__ == '__main__':
