@@ -266,6 +266,8 @@ class World:
                 continue
             trafficlightitems = self.routes[route]['trafficlights']
             for trafficlight, distance, location in trafficlightitems:
+                if trafficlight is None:
+                    continue  # Skip if trafficlight is None
                 x, y, d = location
                 trafficlight_info = {
                     "trafficlight": trafficlight.to_dict(),
