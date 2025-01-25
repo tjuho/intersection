@@ -20,6 +20,13 @@ def get_simulation_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/simulation/update', methods=['POST'])
+def update_simulation():
+    timestep = 0.2
+    simulation.moveTimestep(timestep)
+    return jsonify({"message": "Simulation updated", "timestep": timestep})
+
+
 # @app.route('/api/simulation', methods=['GET'])
 # def get_simulation_data():
 #     simulation = DummylightsTwoCrossings()  # Replace with your actual method to get the simulation
