@@ -12,5 +12,13 @@ class TestSimulationAPI(unittest.TestCase):
         self.assertIn('ai', data)
         self.assertIn('world', data)
 
+    def test_move_timestep(self):
+        response = self.client.get('/api/simulation')
+        initial_state = response.get_json()
+        self.client.post('/api/simulation/update')
+        response = self.client.get('/api/simulation')
+        updated_state = response.get_json()
+        self.assertNotEqual(initial_state, updated_state)
+
 if __name__ == '__main__':
     unittest.main()
