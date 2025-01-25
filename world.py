@@ -242,14 +242,21 @@ class World:
     def getCarsLocationsAndDirections(self):
         result = []
         for route in self.routes.keys():
-            if 'cars' not in self.routes[route].keys(): continue
+            if 'cars' not in self.routes[route].keys():
+                continue
             cars = self.routes[route]['cars']
             for car in cars:
                 x, y, a = route.getLocationAndDirection(car.distance)
                 if x is None or y is None:
                     print('problem with car', car)
                 else:
-                    result.append((car, x, y, a))
+                    car_dict = car.to_dict()
+                    car_dict.update({
+                        "x": x,
+                        "y": y,
+                        "d": a
+                    })
+                    result.append(car_dict)
         return result
 
     def getTrafficlightsLocationsAndDirections(self):
