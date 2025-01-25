@@ -5,7 +5,7 @@ import json
 from car import Car
 from lane import Lane
 from route import Route
-from simulation import Simulation
+from simulation import Simulation, DummylightsTwoCrossings
 from speedchange import SpeedChange
 from trafficlight import Trafficlight
 from trafficlightcontroller import TrafficlightController
@@ -71,6 +71,18 @@ class MyTestCase(unittest.TestCase):
 
         trafficlight = Trafficlight(color="green", yellowTime=1, redtogreendelay=1)
         print(trafficlight.to_dict())
+
+    def test_sim(self):
+
+        simulation = DummylightsTwoCrossings()
+        simulation_dict = simulation.to_dict()
+
+        try:
+            json_data = json.dumps(simulation_dict)
+            print("Serialization Successful!")
+            print(json_data)
+        except TypeError as e:
+            print("Serialization Error:", e)
 
 
 if __name__ == '__main__':

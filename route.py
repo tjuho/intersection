@@ -91,3 +91,6 @@ class Route:
             if distance <= total:
                 return lane
         return None
+
+    def __str__(self):
+        return f"Route length {self.totalTravelDistance}"
