@@ -3,6 +3,8 @@ from flask import Flask, jsonify
 from flask_cors import CORS  # Import CORS
 from simulation import DummylightsTwoCrossings  # Your simulation file
 from trafficlight import Trafficlight
+import pdb
+
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if hasattr(obj, 'to_dict'):
@@ -18,6 +20,7 @@ simulation = DummylightsTwoCrossings()
 @app.route('/api/simulation', methods=['GET'])
 def get_simulation_data():
     try:
+        pdb.set_trace()  # Set a breakpoint
         data = simulation.to_dict()
         return jsonify(data)
     except Exception as e:

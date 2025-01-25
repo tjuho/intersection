@@ -24,30 +24,17 @@ class World:
         return {
             "id": self.id,
             "routes": {
-                str(route): {
-                    "cars": [car.to_dict() for car in route_data.get("cars", [])],
-                    "trafficlights": [
-                        {
-                            "trafficlight": trafficlight.to_dict(),
-                            "distanceFromStart": distance,
-                            "location": location,
-                        }
-                        for trafficlight, distance, location in route_data.get("trafficlights", [])
-                    ],
-                    "sensors": [
-                        {
-                            "sensor": sensor.to_dict(),
-                            "distanceFromStart": distance,
-                        }
-                        for sensor, distance in route_data.get("sensors", [])
-                    ],
+                str(route.id): {
+                    "cars": [car.to_dict() for car in route.cars],  # Using list
+                    "trafficlights": [tl.to_dict() for tl in route.trafficlights],  # Using list
+                    "sensors": [sensor.to_dict() for sensor in route.sensors],
                 }
-                for route, route_data in self.routes.items()
+                for route in self.routes
             },
             "lanes": [lane.to_dict() for lane in self.getLanes()],
-            "trafficlightsLocationsAndDirections": self.getTrafficlightsLocationsAndDirections(),
+            "trafficlightsLocationsAndDirections": [tl_loc.to_dict() for tl_loc in self.getTrafficlightsLocationsAndDirections()],
             "sensorsFired": [sensor.to_dict() for sensor in self.sensorsFired],
-            "sensorRouteDistances": self.sensorRouteDistances,
+            "sensorRouteDistances": self.sensorRouteDistances,  # Ensure this is serializable
         }
 
     def moveTimestep(self, timestep):
@@ -261,11 +248,8 @@ class World:
 
     def getTrafficlightsLocationsAndDirections(self):
         result = []
-        for route in self.routes.keys():
-            if 'trafficlights' not in self.routes[route].keys():
-                continue
-            trafficlightitems = self.routes[route]['trafficlights']
-            for trafficlight, distance, location in trafficlightitems:
+        for route in self.routes:
+            for trafficlight, distance, location in route.trafficlights:
                 if trafficlight is None:
                     continue  # Skip if trafficlight is None
                 x, y, d = location
