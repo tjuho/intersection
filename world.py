@@ -39,8 +39,8 @@ class World:
                 if car.distance >= route.totalTravelDistance:
                     carsToRemove.append(car)
         for car in carsToRemove:
+            print('remove car', car)
             self.removeCar(car)
-
     def addRoute(self, route):
         if route not in self.routes:
             self.routes.append(route)
@@ -51,19 +51,7 @@ class World:
     '''
 
     def addTrafficlight(self, trafficlight: Trafficlight, lane: Lane, distancefromlanestart: float):
-        for route in self.routes.keys():
-            routedistance = self.calculateRouteDistanceFromLaneDistance(route, lane, distancefromlanestart)
-            if routedistance is not None:
-                x, y = lane.getLocation(distancefromlanestart)
-                d = lane.getDirection(distancefromlanestart)
-                newitem = (trafficlight, routedistance, (x, y, d))
-                newtrafficlights = [newitem]
-                if 'trafficlights' not in self.routes[route].keys():
-                    self.routes[route]['trafficlights'] = []
-                for ttrafficlight, distance, location in self.routes[route]['trafficlights']:
-                    if trafficlight != ttrafficlight:
-                        newtrafficlights.append((ttrafficlight, distance, location))
-                self.routes[route]['trafficlights'] = newtrafficlights
+        lane.addTrafficlight(trafficlight)
 
     def addCar(self, car: Car, route: Route):
         car.timeFromLastSpeedChange = -1e-10  # this is some bug fix
@@ -93,7 +81,7 @@ class World:
     def removeCar(self, car: Car):
         for route in self.routes:
             if car in route.cars:
-                route.cars.pop(car)
+                route.cars.remove(car)
                 break
 
     def getCarRoute(self, car: Car):
@@ -164,14 +152,14 @@ class World:
 
     def getNextCarAheadAndDistance(self, car: Car) -> (Car, float):
         route = self.getCarRoute(car)
-        commonRoutes = self.getRoutesWithCommonLane(route) # not implemented yet
+        # commonRoutes = self.getRoutesWithCommonLane(route) # not implemented yet
         cars = self.getCars(route)
-        cars.pop(car)
+        cars.remove(car)
         minDistance = None
         result = None
         for acar in cars:
             diff = acar.distance - car.distance
-            if diff > 0 and (minDistance is not None or minDistance > diff):
+            if diff > 0 and (minDistance is None or minDistance > diff):
                 result = acar
                 minDistance = diff
         return result, minDistance

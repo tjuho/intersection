@@ -82,6 +82,22 @@ class MyTestCase(unittest.TestCase):
         world.removeCar(car)
         self.assertEqual(0, len(world.getCarsLocationsAndDirections()))
 
+    def test_getNextCarAheadAndDistance(self):
+        limit = 1
+        world = World()
+        lane = StraightLane(100,0,0,100,3,limit)
+        route = Route([lane])
+        world.addRoute(route)
+        car = Car(limit)
+        world.addCar(car, route)
+        world.moveTimestep(10)
+        car1 = Car(limit)
+        world.addCar(car1, route)
+        self.assertEqual(2, len(world.getCarsLocationsAndDirections()))
+        ahead, dist  = world.getNextCarAheadAndDistance(car1)
+        self.assertEqual(car, ahead)
+        self.assertEqual(10, dist)
+
     def test_routedistancefromlanedistance(self):
         limit = 60/3.6
         world = World()
