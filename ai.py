@@ -35,7 +35,7 @@ class AI:
     def _adjustCar(self, car: Car, route: Route):
         currentspeed = car.getSpeed()
         carahead, distancetocarahead = self.world.getNextCarAheadAndDistance(car)
-        trafficlight, distancetotrafficlightahead = self.world.getNextNonGreenTrafficlightAndDistance(car)
+        trafficlight, distancetotrafficlightahead = route.getNextNonGreenTrafficlightAndDistance(car.distance)
         reactiondistance = self._calculateReactionDistance(currentspeed)
         currentlane = route.getCurrentLane(car.distance)
         speedlimit = currentlane.getSpeedlimit()

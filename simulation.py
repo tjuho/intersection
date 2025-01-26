@@ -5,8 +5,8 @@ from trafficlight import Trafficlight
 from car import Car
 from trafficlightcontroller import TrafficlightController
 from route import Route
-from random import randint
-
+import utils
+import random
 '''Simulations that control the traffic lights and car spawning'''
 
 
@@ -40,12 +40,10 @@ class Simulation:
     def updateWorldState(self, timestep):
         pass
 
-    # simulation.py
-
 class DummylightsTwoCrossings(Simulation):
     def __init__(self):
         super().__init__()
-        self.timeToTrafficlightControllerStateChange = [randint(15, 60), randint(15, 60)]
+        self.timeToTrafficlightControllerStateChange = [random.randint(15, 60), random.randint(15, 60)]
         self.routeCarSpawn = {}
         self.setup()
 
@@ -92,12 +90,12 @@ class DummylightsTwoCrossings(Simulation):
         lane3b = StraightLane(cx - lanewidth * 0.5 + lanelength, starty2 + lanelength, 270, lanelength, lanewidth,
                               60 / 3.6)
 
-        route1a = Route([lane1a1, lane1a2])
-        route1b = Route([lane1b1, lane1b2])
-        route2a = Route([lane2a])
-        route2b = Route([lane2b])
-        route3a = Route([lane3a])
-        route3b = Route([lane3b])
+        route1a = Route([lane1a1, lane1a2], 8)
+        route1b = Route([lane1b1, lane1b2], 8)
+        route2a = Route([lane2a],8)
+        route2b = Route([lane2b], 8)
+        route3a = Route([lane3a], 8)
+        route3b = Route([lane3b], 8)
 
         self.world.addRoute(route1a)
         self.world.addRoute(route1b)
@@ -138,48 +136,67 @@ class DummylightsTwoCrossings(Simulation):
             if route not in self.routeCarSpawn.keys():
                 self.routeCarSpawn[route] = {}
             self.routeCarSpawn[route]['spawntimes'] = spawntimes
-            nextspawntime = spawntimes[randint(0, len(self.routeCarSpawn[route]['spawntimes']) - 1)]
+            nextspawntime = spawntimes[random.randint(0, len(self.routeCarSpawn[route]['spawntimes']) - 1)]
             self.routeCarSpawn[route]['spawntime'] = nextspawntime
 
     def updateWorldState(self, timestep):
-        # does not change the trafficlight state
         # spawn car
-        for route in self.routeCarSpawn.keys():
-            tospawn = self.routeCarSpawn[route]['spawntime']
-            tospawn -= timestep
-            if tospawn > 0:
-                self.routeCarSpawn[route]['spawntime'] = tospawn
-            else:  # create a new car to the route
-                lastcar = self.world.getNewestCar(route)
-                if lastcar is not None and lastcar.distance < 10:
-                    continue
-                nextspawntime = self.routeCarSpawn[route]['spawntimes'][
-                    randint(0, len(self.routeCarSpawn[route]['spawntimes']) - 1)]
-                self.routeCarSpawn[route]['spawntime'] = nextspawntime + tospawn
-                speed = route.getSpeedLimit()
-                if lastcar is not None:
-                    lspeed = lastcar.getSpeed()
-                    speed = min(speed,
-                                math.sqrt(lspeed * lspeed - 2 * lastcar.preferredDeceleration * lastcar.distance))
-                car = Car(speed)
-                self.world.addCar(car, route)
-                carahead, dist = self.world.getNextCarAheadAndDistance(car)
-                if dist is not None:
-                    distmargin = car.calculateDistanceMargin(speed)
-                    if dist < distmargin:
-                        # maybe we should stop the simulation
-                        print('too close to car ahead')
-                        pass
-                    elif dist < distmargin * 1.5 and car.getSpeed() * 0.99 > carahead.getSpeed():
-                        # here the car ahead speed already drops so the queue end is near
-                        pass
-        # the trafficlights are constant time controlled
+        for route in self.world.routes:
+            if utils.shouldTriggerEvent(timestep, route.carSpawnRate):
+                route.carSpawnQueue += 1
+            lastCar, minDistance  = route.getNewestCarAndDistance()
+            speed = route.getSpeedLimit() if lastCar is None else lastCar.getSpeed()
+            margin = utils.calculateDistanceMargin(speed)
+            if route.carSpawnQueue > 0 and (lastCar is None or minDistance >= margin):
+                route.addCar(Car(speed))
+                route.carSpawnQueue -= 1
+        # the trafficlights cycle in constant time periods
         for i, time in enumerate(self.timeToTrafficlightControllerStateChange):
             newtime = time - timestep
             if newtime <= 0:
-                newtime = randint(15, 60)
+                newtime = random.randint(15, 60)
                 self.trafficlightControllers[i].cycle()
             self.timeToTrafficlightControllerStateChange[i] = newtime
+
+    # def updateWorldState(self, timestep):
+    #     # does not change the trafficlight state
+    #     # spawn car
+    #     for route in self.routeCarSpawn.keys():
+    #         tospawn = self.routeCarSpawn[route]['spawntime']
+    #         tospawn -= timestep
+    #         if tospawn > 0:
+    #             self.routeCarSpawn[route]['spawntime'] = tospawn
+    #         else:  # create a new car to the route
+    #             lastcar = self.world.getNewestCar(route)
+    #             if lastcar is not None and lastcar.distance < 10:
+    #                 continue
+    #             nextspawntime = self.routeCarSpawn[route]['spawntimes'][
+    #                 random.randint(0, len(self.routeCarSpawn[route]['spawntimes']) - 1)]
+    #             self.routeCarSpawn[route]['spawntime'] = nextspawntime + tospawn
+    #             speed = route.getSpeedLimit()
+    #             if lastcar is not None:
+    #                 lspeed = lastcar.getSpeed()
+    #                 speed = min(speed,
+    #                             math.sqrt(lspeed * lspeed - 2 * lastcar.preferredDeceleration * lastcar.distance))
+    #             car = Car(speed)
+    #             self.world.addCar(car, route)
+    #             carahead, dist = self.world.getNextCarAheadAndDistance(car)
+    #             if dist is not None:
+    #                 distmargin = car.calculateDistanceMargin(speed)
+    #                 if dist < distmargin:
+    #                     # maybe we should stop the simulation
+    #                     print('too close to car ahead')
+    #                     pass
+    #                 elif dist < distmargin * 1.5 and car.getSpeed() * 0.99 > carahead.getSpeed():
+    #                     # here the car ahead speed already drops so the queue end is near
+    #                     pass
+    #     # the trafficlights are constant time controlled
+    #     for i, time in enumerate(self.timeToTrafficlightControllerStateChange):
+    #         newtime = time - timestep
+    #         if newtime <= 0:
+    #             newtime = random.randint(15, 60)
+    #             self.trafficlightControllers[i].cycle()
+    #         self.timeToTrafficlightControllerStateChange[i] = newtime
 
 
 '''
@@ -198,7 +215,7 @@ def calculateCarSpawnDistribution(avgSpawnTime, initialSpawnTimeList, newSpawnTi
 
 
 def calculateTimeToNextCarSpawn(spawnTimesDistribution):
-    return spawnTimesDistribution[randint(0, len(spawnTimesDistribution) - 1)]
+    return spawnTimesDistribution[random.randint(0, len(spawnTimesDistribution) - 1)]
 
 
 def getUnityMatrix(size):

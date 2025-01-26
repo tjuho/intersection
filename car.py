@@ -1,5 +1,6 @@
 from speedchange import SpeedChange
 import math
+import utils
 import uuid
 '''Car state and movement'''
 
@@ -21,7 +22,7 @@ class Car:
         self.time = 0.0
         self.distance = 0.0
         self.timeFromLastSpeedChange = 0.0
-        self.zeromargin = self.calculateDistanceMargin(0)
+        self.zeromargin = utils.calculateDistanceMargin(0)
         self.speedItems = [(0, initialspeed, 0)]
         '''speed item type is (startTime, speed, distance)'''
 
@@ -222,27 +223,6 @@ class Car:
                 self.changeSpeed(speed, (speed - initialspeed) / self.preferredAcceleration, offsettime)
             else:
                 self.changeSpeed(speed, (speed - initialspeed) / self.preferredDeceleration, offsettime)
-
-    '''
-    Calculates distance margin for the car. So That with higher speeds the car stays further away from the car in front
-    '''
-
-    def calculateDistanceMargin(self, speed: float) -> float:
-        speeds = [0.0, 40 / 3.6, 60 / 3.6, 80 / 3.6, 120 / 3.6]
-        distances = [2.0, 5.0, 10.0, 16.0, 32.0]
-        minIndex = None
-        maxIndex = None
-        for i, referenceSpeed in enumerate(speeds):
-            if speed <= referenceSpeed:
-                minIndex = i - 1
-                maxIndex = i
-                break
-        if minIndex is not None and maxIndex is not None:
-            k = (distances[maxIndex] - distances[minIndex]) / (speeds[maxIndex] - speeds[minIndex])
-            b = distances[minIndex] - k * speeds[minIndex]
-            return k * speed + b + self.halflength
-        result = distances[-1]
-        return result + self.halflength
 
     def makesFaster(self, speedchange: SpeedChange) -> bool:
         tspeed1 = self.getTargetSpeed()

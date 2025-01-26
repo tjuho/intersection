@@ -7,17 +7,21 @@ def sumTwo(a, b):
 
 
 class Route:
-    def __init__(self, lanes: [Lane]):
+    def __init__(self, lanes: [Lane], spawnRate=0):
         self.id = str(uuid.uuid4())
         self.lanes = lanes
         self.cars = []
         self.totalTravelDistance = sum([x.length for x in lanes])
+        self.carSpawnRate = spawnRate
+        self.carSpawnQueue = 0
 
     def to_dict(self):
         return {
             "id": self.id,
             "lanes": [lanes.to_dict() for lanes in self.lanes],
             "totalTravelDistance": self.totalTravelDistance,
+            "carSpawnRate": self.carSpawnRate,
+            "carSpawnQueue": self.carSpawnQueue,
         }
 
     def addLane(self, lane):
@@ -137,5 +141,15 @@ class Route:
         ls = [x.length for x in self.lanes]
         return sum(ls)
 
+    def getNewestCarAndDistance(self):
+        minDistance = None
+        result = None
+        for car in self.cars:
+            if minDistance is None or car.distance < minDistance:
+                minDistance = car.distance
+                result = car
+        return result, minDistance
+
     def __str__(self):
         return f"Route length {self.totalTravelDistance}"
+

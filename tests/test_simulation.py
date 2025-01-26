@@ -46,7 +46,7 @@ class MyTestCase(unittest.TestCase):
         failurelist = []
         for i in range(10):
             found = False
-            dum = Dummylights()
+            dum = DummylightsTwoCrossings()
             for c in range(x):
                 dum.moveTimestep(.2)
                 routes = dum.world.getRoutes()
@@ -67,6 +67,18 @@ class MyTestCase(unittest.TestCase):
         print(failurelist)
         self.assertEqual(0, len(failurelist))
 
+    def test_dummysimulation1(self):
+        x = 100000
+        failurelist = []
+        dum = DummylightsTwoCrossings()
+        for c in range(x):
+            dum.moveTimestep(.2)
+            routes = dum.world.getRoutes()
+            for route in routes:
+                cars = dum.world.getCars(route)
+                print(route, len(cars))
+
+
 
     def test_dummysimulation1(self):
         x = 10000
@@ -74,7 +86,7 @@ class MyTestCase(unittest.TestCase):
         for i in range(10):
             print('now',i)
             found = False
-            dum = Dummylights()
+            dum = DummylightsTwoCrossings()
             for c in range(x):
                 dum.moveTimestep(.2)
                 routes = dum.world.getRoutes()
