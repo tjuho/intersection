@@ -38,7 +38,9 @@ class Lane:
         }
 
     def addTrafficlight(self, trafficlight):
-        if trafficlight not in self.trafficlights:
+        if trafficlight.distanceFromLaneStart > self.length:
+            print('warning: trafficlight position exceeds lane length')
+        elif trafficlight not in self.trafficlights:
             self.trafficlights.append(trafficlight)
 
     def coordinates(self, distance):
