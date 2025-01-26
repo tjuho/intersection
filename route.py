@@ -25,6 +25,12 @@ class Route:
             self.lanes.append(lane)
             self.totalTravelDistance = sum([x.length for x in self.lanes])
 
+    def addCar(self, car):
+        if car not in self.cars:
+            print('add car', car)
+            self.cars.append(car)
+            print('all cars', self.cars)
+
     # returns the current lane and all the other remaining lanes
     def getLanesLeft(self, distanceCovered: float):
         totalDistance = 0
@@ -126,6 +132,9 @@ class Route:
                 return tl, dist + distance
         return None, None
 
+    def getTotalDistance(self):
+        ls = [x.length for x in self.lanes]
+        return sum(ls)
 
     def __str__(self):
         return f"Route length {self.totalTravelDistance}"
