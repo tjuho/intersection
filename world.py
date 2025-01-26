@@ -30,51 +30,20 @@ class World:
 
     def moveTimestep(self, timestep):
         carsToRemove = []
-        for route in self.routes.keys():
-            dic = self.routes[route]
-            if 'trafficlights' in self.routes[route].keys():
-                for trafficlight, _, _ in self.routes[route]['trafficlights']:
-                    trafficlight.moveTimestep(timestep)
-            if 'cars' in self.routes[route].keys():
-                for car in self.routes[route]['cars']:
-                    d1 = car.distance
-                    car.moveTimestep(timestep)
-                    d2 = car.distance
-                    if car.distance >= route.totalTravelDistance:
-                        carsToRemove.append(car)
-                    if 'sensors' in self.routes[route].keys():
-                        for sensor, sensorroutedistance in self.routes[route]['sensors']:
-                            if sensorroutedistance <= d1 and sensorroutedistance > d2:
-                                speed1 = car.getSpeed(-timestep)
-                                speed2 = car.getSpeed()
-                                sensor.addDetection(0.5 * (speed1 + speed2), (speed2 - speed1) / timestep, car.length)
+        for route in self.routes:
+            temp = route.getTrafficlightsLocationsAndDirections()
+            for tl, _, _, _ in temp:
+                tl.moveTimestep(timestep)
+            for car in route.cars:
+                car.moveTimestep(timestep)
+                if car.distance >= route.totalTravelDistance:
+                    carsToRemove.append(car)
         for car in carsToRemove:
             self.removeCar(car)
-        for route in self.routes.keys():
-            dic = self.routes[route]
-            if 'sensors' in self.routes[route].keys():
-                for sensor, _ in self.routes[route]['sensors']:
-                    sensor.resetDetections()
 
     def addRoute(self, route):
-        self.routes[route] = {}
-        self.routes[route]['cars'] = []
-        self.routes[route]['trafficlights'] = []
-        self.routes[route]['sensors'] = []
-
-    def addSensor(self, sensor, lane, distancefromlanestart):
-        # first check that the lane is in some route
-        routefound = False
-        for route in self.routes.keys():
-            routedistance = self.calculateRouteDistanceFromLaneDistance(route, lane, distancefromlanestart)
-            if routedistance is not None:
-                newsensors = [(sensor, routedistance)]
-                if 'sensors' not in self.routes[route].keys():
-                    self.routes[route]['sensors'] = []
-                for tsensor, distance in self.routes[route]['sensors']:
-                    if sensor != tsensor:
-                        newsensors.append((tsensor, distance))
-                self.routes[route]['sensors'] = newsensors
+        if route not in self.routes:
+            self.routes.append()
 
     '''
     Adds traffic light to given lane. If the yellowtime is None then we calculate it from the lane's speed limit.
