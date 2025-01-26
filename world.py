@@ -17,8 +17,6 @@ class World:
         '''
         self.id = str(uuid.uuid4())
         self.routes = []
-        self.sensorsFired = []
-        self.sensorRouteDistances = {}  # indexing a bit here
 
     def to_dict(self):
         return {
@@ -28,7 +26,6 @@ class World:
             "trafficlightsLocationsAndDirections": self.getTrafficlightsLocationsAndDirections(),
             "carsLocationsAndDirections": self.getCarsLocationsAndDirections(),
             "sensorsFired": [sensor.to_dict() for sensor in self.sensorsFired],
-            "sensorRouteDistances": self.sensorRouteDistances,  # Ensure this is serializable
         }
 
     def moveTimestep(self, timestep):
