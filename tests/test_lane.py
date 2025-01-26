@@ -1,6 +1,6 @@
 import unittest
 from lane import *
-
+from trafficlight import Trafficlight
 
 class MyTestCase(unittest.TestCase):
     def test_boundingboxofxurvedlane(self):
@@ -28,4 +28,10 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(1, xmin)
         self.assertAlmostEqual(2, ymin)
 
-        print(10e-9)
+    def test_getNextNonGreenTrafficlightAndDistance(self):
+        lane = CurvedLane(1, 2, 180, 0, 1, 1, False)
+        tl = Trafficlight(1,2,"red", 10)
+        lane.trafficlights.append(tl)
+        l, dist = lane.getNextNonGreenTrafficlightAndDistance(5)
+        self.assertAlmostEqual(tl, l)
+        self.assertAlmostEqual(dist, 5)

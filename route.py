@@ -10,6 +10,7 @@ class Route:
     def __init__(self, lanes: [Lane]):
         self.id = str(uuid.uuid4())
         self.lanes = lanes
+        self.cars = []
         self.totalTravelDistance = sum([x.length for x in lanes])
 
     def to_dict(self):
@@ -24,8 +25,8 @@ class Route:
             self.lanes.append(lane)
             self.totalTravelDistance = sum([x.length for x in self.lanes])
 
+    # returns the current lane and all the other remaining lanes
     def getLanesLeft(self, distanceCovered: float):
-        # returns the current lane and all the other remaining lanes
         totalDistance = 0
         result = []
         for lane in self.lanes:
@@ -64,6 +65,22 @@ class Route:
         x, y = self.lanes[i].getLocation(d)
         return x, y, self.lanes[i].getDirection(d)
 
+    def getCarsLocationsAndDirections(self):
+        result = []
+        for car in self.cars:
+            x,y,d = self.getLocationAndDirection(car.distance)
+            result.append((car, x,y,d))
+        return result
+
+    def getTrafficlightsLocationsAndDirections(self):
+        result = []
+        for lane in self.lanes:
+            for tl in lane.trafficlights:
+                x,y = lane.getLocation(tl.distanceFromLaneStart)
+                d = lane.getDirection(tl.distanceFromLaneStart)
+                result.append((tl, x, y, d))
+        return result
+
     def getDistanceToLaneStart(self, lane: Lane, distanceCovered: float):
         if lane not in self.lanes:
             return None
@@ -91,6 +108,24 @@ class Route:
             if distance <= total:
                 return lane
         return None
+
+    def getNextNonGreenTrafficlightAndDistance(self, distanceCovered):
+        lanePosition = self.getCurrentLaneDistanceCovered(distanceCovered)
+        lanes = self.getLanesLeft(distanceCovered)
+        if len(lanes) == 0:
+            return None, None
+        if len(lanes) == 1:
+            return lanes[0].getNextNonGreenTrafficlightAndDistance(lanePosition)
+        tl, dist = lanes[0].getNextNonGreenTrafficlightAndDistance(lanePosition)
+        if tl is not None:
+            return tl, dist
+        distance = lanes[0].length - lanePosition
+        for i, lane in enumerate(lanes[1:]):
+            tl, dist = lane.getNextNonGreenTrafficlightAndDistance(0)
+            if tl is not None:
+                return tl, dist + distance
+        return None, None
+
 
     def __str__(self):
         return f"Route length {self.totalTravelDistance}"

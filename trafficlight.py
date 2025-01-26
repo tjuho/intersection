@@ -1,11 +1,12 @@
 import uuid
 class Trafficlight:
-    def __init__(self, yellowTime: float, redtogreendelay: float, color='green'):
+    def __init__(self, yellowTime: float, redtogreendelay: float, color, distanceFromLaneStart: float):
         self.id = str(uuid.uuid4())
         self.color = color
         self.timeToNextColorChange = None
         self.yellowTime = yellowTime
         self.redToGreenDelay = redtogreendelay
+        self.distanceFromLaneStart = distanceFromLaneStart
 
     def to_dict(self):
         return {

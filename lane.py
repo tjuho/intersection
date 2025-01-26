@@ -18,6 +18,7 @@ class Lane:
         self.endDirection = endDirection
         self.type = None
         self.speedLimit = speedLimit
+        self.trafficlights = []
 
     def to_dict(self):
         return {
@@ -66,6 +67,17 @@ class Lane:
 
     def getSpeedlimit(self):
         return self.speedLimit
+
+    def getNextNonGreenTrafficlightAndDistance(self, distanceCovered):
+        minDistance = None
+        result = None
+        for trafficlight in self.trafficlights:
+            temp = trafficlight.distanceFromLaneStart
+            if temp >= distanceCovered and (minDistance is None or minDistance > temp - distanceCovered) and trafficlight.color != 'green':
+                minDistance = temp - distanceCovered
+                result = trafficlight
+        return result, minDistance
+
 
     def __str__(self):
         return 'Lane: startx {:.2f} starty {:.2f} endx {:.2f} endy {:.2f} length {:.2f} width {:.2f} start direction {:.4f} end direction {:.4f}' \

@@ -16,14 +16,14 @@ class World:
         'sensors': [(Sensor, distanceFromStart)]}
         '''
         self.id = str(uuid.uuid4())
-        self.routes = {}
+        self.routes = []
         self.sensorsFired = []
         self.sensorRouteDistances = {}  # indexing a bit here
 
     def to_dict(self):
         return {
             "id": self.id,
-            "routes": [route.to_dict() for route in self.routes.keys()],
+            "routes": [route.to_dict() for route in self.routes],
             "lanes": [lane.to_dict() for lane in self.getLanes()],
             "trafficlightsLocationsAndDirections": self.getTrafficlightsLocationsAndDirections(),
             "carsLocationsAndDirections": self.getCarsLocationsAndDirections(),
@@ -136,141 +136,101 @@ class World:
         return None
 
     def removeCar(self, car: Car):
-        route = self.getCarRoute(car)
-        assert (route in self.routes.keys())
-        remaining = [x for x in self.routes[route]['cars'] if x is not car]
-        self.routes[route]['cars'] = remaining
+        for route in self.routes:
+            if car in route.cars:
+                route.cars.pop(car)
+                break
 
     def getCarRoute(self, car: Car):
-        for route in self.routes.keys():
-            if 'cars' in self.routes[route].keys():
-                if car in self.routes[route]['cars']:
-                    return route
+        for route in self.routes:
+            if car in route.cars:
+                return route
 
     def getRoutes(self):
-        if self.routes.keys() is None: return []
-        return list(self.routes.keys())
+        return self.routes
 
     def getCars(self, route: Route):
-        routedict = self.routes[route]
-        if routedict is None: return []
-        if 'cars' not in routedict: return []
-        return routedict['cars']
+        return route.cars
 
     def getLanes(self):
         result = []
-        for route in self.routes.keys():
-            temp = [x for x in route.lanes if x not in result]
-            result.extend(temp)
+        for route in self.routes:
+            result.extend(route.lanes)
         return result
 
-    def getAllCars(self):
-        result = []
-        for route in self.routes.keys():
-            if 'cars' not in self.routes[route].keys(): continue
-            temp = [x for x in self.routes[route]['cars'] if x not in result]
-            result.extend(temp)
-        return result
-
-    def getTrafficlights(self):
-        result = []
-        for route in self.routes.keys():
-            if 'trafficlights' not in self.routes[route].keys(): continue
-            temp = [x for x in self.routes[route]['trafficlights'] if x not in result]
-            result.extend(temp)
-        return result
-
-    def getSensorsLocations(self):
-        result = []
-        for route in self.routes.keys():
-            if 'sensors' not in self.routes[route].keys(): continue
-            sensors = self.routes[route]['sensors']
-            for sensor in sensors:
-                x, y, a = route.getLocationAndDirection(sensor.distance)
-                if x is None or y is None:
-                    print('problem with car', sensor)
-                else:
-                    result.append((sensor, x, y, a))
-        return result
+    # def getSensorsLocations(self):
+    #     result = []
+    #     for route in self.routes.keys():
+    #         if 'sensors' not in self.routes[route].keys(): continue
+    #         sensors = self.routes[route]['sensors']
+    #         for sensor in sensors:
+    #             x, y, a = route.getLocationAndDirection(sensor.distance)
+    #             if x is None or y is None:
+    #                 print('problem with car', sensor)
+    #             else:
+    #                 result.append((sensor, x, y, a))
+    #     return result
 
     def getNextNonGreenTrafficlightAndDistance(self, car: Car):
         route = self.getCarRoute(car)
-        try:
-            trafficlightitems = self.routes[route]['trafficlights']
-            distance = None
-            trafficlight = None
-            for tl, tld, _ in trafficlightitems:
-                delta = tld - car.distance
-                if delta >= 0 and (distance is None or distance > delta) and tl.color != 'green':
-                    distance = delta
-                    trafficlight = tl
-            return trafficlight, distance
-        except KeyError:
-            return None, None
+        return route.getNextNonGreenTrafficlightAndDistance(car.distance)
+
+    # def getNextNonGreenTrafficlightAndDistance(self, car: Car):
+    #     route = self.getCarRoute(car)
+    #     try:
+    #         distance = route.getCurrentLane(car.distance)
+    #         lanes = route.getLanesLeft(distance)
+    #         lanePosition = route.getCurrentLaneDistanceCovered(distance)
+    #         trafficlightitems = self.routes[route]['trafficlights']
+    #         distance = None
+    #         trafficlight = None
+    #         for tl, tld, _ in trafficlightitems:
+    #             delta = tld - car.distance
+    #             if delta >= 0 and (distance is None or distance > delta) and tl.color != 'green':
+    #                 distance = delta
+    #                 trafficlight = tl
+    #         return trafficlight, distance
+    #     except KeyError:
+    #         return None, None
 
     def getRoutesWithCommonLane(self, route: Route):
         result = []
-        for temp in self.routes.keys():
-            if temp != route and any(item in temp.lanes for item in route.lanes):
-                result.append(temp)
+        for aroute in self.routes:
+            if route != aroute:
+                if bool(set(route.lanes) & set(aroute.lanes)):
+                    result.append(aroute)
         return result
 
     '''
     Gets the next car ahead.
     Assumes that the next car is placed to the route just before this one (e.g. cars at the same route can't overtake. 
-    This might not be true in the future because routes might share lanes in the future.
+    This might not be true in the future because routes might have common.
     '''
 
     def getNextCarAheadAndDistance(self, car: Car) -> (Car, float):
-        for route in self.routes.keys():
-            if 'cars' in self.routes[route].keys():
-                cars = self.routes[route]['cars']
-                if car in cars:
-                    i = cars.index(car)
-                    if i > 0:
-                        ahead = cars[i - 1]
-                        distance = ahead.distance - car.distance
-                        #                assert (distance > 0)
-                        return ahead, distance
-                    elif i == 0:
-                        return None, None
-        return None, None
+        route = self.getCarRoute(car)
+        commonRoutes = self.getRoutesWithCommonLane(route) # not implemented yet
+        cars = self.getCars(route)
+        cars.pop(car)
+        minDistance = None
+        result = None
+        for acar in cars:
+            diff = acar.distance - car.distance
+            if diff > 0 and (minDistance is not None or minDistance > diff):
+                result = acar
+                minDistance = diff
+        return result, minDistance
 
     def getCarsLocationsAndDirections(self):
         result = []
-        for route in self.routes.keys():
-            if 'cars' not in self.routes[route].keys():
-                continue
-            cars = self.routes[route]['cars']
-            for car in cars:
-                x, y, a = route.getLocationAndDirection(car.distance)
-                if x is None or y is None:
-                    print('problem with car', car)
-                else:
-                    car_dict = car.to_dict()
-                    car_dict.update({
-                        "x": x,
-                        "y": y,
-                        "d": a
-                    })
-                    result.append(car_dict)
+        for route in self.routes:
+            result.extend(route.getCarsLocationsAndDirections())
         return result
 
     def getTrafficlightsLocationsAndDirections(self):
         result = []
         for route in self.routes:
-            if 'trafficlights' not in self.routes[route].keys(): continue
-            for trafficlight, distance, location in self.routes[route]['trafficlights']:
-                if trafficlight is None:
-                    continue  # Skip if trafficlight is None
-                x, y, d = location
-                trafficlight_info = {
-                    "trafficlight": trafficlight.to_dict(),
-                    "x": x,
-                    "y": y,
-                    "d": d
-                }
-                result.append(trafficlight_info)
+            result.extend(route.getTrafficlightsLocationsAndDirections())
         return result
 
     def getBoundingBox(self):
