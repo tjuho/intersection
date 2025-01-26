@@ -37,6 +37,10 @@ class Lane:
             "speedLimit": self.speedLimit,
         }
 
+    def addTrafficlight(self, trafficlight):
+        if trafficlight not in self.trafficlights:
+            self.trafficlights.append(trafficlight)
+
     def coordinates(self, distance):
         if distance > self.length:
             return None, None
