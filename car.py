@@ -23,7 +23,7 @@ class Car:
         self.distance = 0.0
         self.timeFromLastSpeedChange = 0.0
         self.zeromargin = utils.calculateDistanceMargin(0)
-        self.speedItems = [(0, initialspeed, 0)]
+        self.speedItems = [(0.0, initialspeed, 0.0)]
         '''speed item type is (startTime, speed, distance)'''
 
         self.debug = None

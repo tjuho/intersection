@@ -1,23 +1,8 @@
 import unittest
 from simulation import *
 import random
+from car import Car
 
-class A:
-    def __init__(self):
-        self.t = 't'
-    def call(self):
-        self.back()
-
-    def back(self):
-        print('A')
-
-class B(A):
-    def __init__(self):
-        super().__init__()
-
-    def back(self):
-        print('B')
-        print(self.t)
 
 class MyTestCase(unittest.TestCase):
     def test_spawnratedistribution(self):
@@ -32,14 +17,6 @@ class MyTestCase(unittest.TestCase):
             time += value
             count += 1
         self.assertAlmostEqual(avg, time/count)
-
-    def test_inheritance(self):
-        b = B()
-        b.back()
-
-    def test_listslicing(self):
-        a = [1,23,4,56,7,8]
-        print(a[-4:])
 
     def test_dummysimulation(self):
         x = 100000
@@ -67,16 +44,17 @@ class MyTestCase(unittest.TestCase):
         print(failurelist)
         self.assertEqual(0, len(failurelist))
 
-    def test_dummysimulation1(self):
-        x = 100000
-        failurelist = []
+    def test_dummysimulation11(self):
         dum = DummylightsTwoCrossings()
-        for c in range(x):
-            dum.moveTimestep(.2)
-            routes = dum.world.getRoutes()
-            for route in routes:
-                cars = dum.world.getCars(route)
-                print(route, len(cars))
+        print('')
+        print(dum.world.routes)
+        print(len(dum.world.getCarsLocationsAndDirections()))
+        route = dum.world.routes[0]
+        dum.world.addCar(Car(1),route)
+        for i in range(1):
+            dum.world.moveTimestep(1)
+        self.assertEqual(1, len(dum.world.getCarsLocationsAndDirections()))
+
 
 
 

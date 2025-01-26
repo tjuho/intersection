@@ -1,4 +1,6 @@
 import math
+
+import utils
 from world import World
 from route import Route
 from trafficlight import Trafficlight
@@ -48,7 +50,7 @@ class AI:
                 speedchange = self._speedChangesToAdjustToCarAhead(carahead, currentspeed, speedlimit,
                                                                    distancetocarahead, car.preferredAcceleration,
                                                                    car.preferredDeceleration,
-                                                                   car.calculateDistanceMargin)
+                                                                   utils.calculateDistanceMargin)
                 speedchangelist.append(speedchange)
             self._carAiContainer.setTargetCar(car, carahead)
         else:

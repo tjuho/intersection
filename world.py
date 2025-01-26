@@ -39,7 +39,6 @@ class World:
                 if car.distance >= route.totalTravelDistance:
                     carsToRemove.append(car)
         for car in carsToRemove:
-            print('remove car', car)
             self.removeCar(car)
     def addRoute(self, route):
         if route not in self.routes:
@@ -54,7 +53,6 @@ class World:
         lane.addTrafficlight(trafficlight)
 
     def addCar(self, car: Car, route: Route):
-        car.timeFromLastSpeedChange = -1e-10  # this is some bug fix
         car.maxSpeed = route.getSpeedLimit()
         route.addCar(car)
 
@@ -82,6 +80,7 @@ class World:
         for route in self.routes:
             if car in route.cars:
                 route.cars.remove(car)
+                print('remove car', car)
                 break
 
     def getCarRoute(self, car: Car):
@@ -154,14 +153,14 @@ class World:
         route = self.getCarRoute(car)
         # commonRoutes = self.getRoutesWithCommonLane(route) # not implemented yet
         cars = self.getCars(route)
-        cars.remove(car)
         minDistance = None
         result = None
         for acar in cars:
-            diff = acar.distance - car.distance
-            if diff > 0 and (minDistance is None or minDistance > diff):
-                result = acar
-                minDistance = diff
+            if acar != car:
+                diff = acar.distance - car.distance
+                if diff > 0 and (minDistance is None or minDistance > diff):
+                    result = acar
+                    minDistance = diff
         return result, minDistance
 
     def getCarsLocationsAndDirections(self):

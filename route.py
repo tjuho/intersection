@@ -30,10 +30,9 @@ class Route:
             self.totalTravelDistance = sum([x.length for x in self.lanes])
 
     def addCar(self, car):
-        if car not in self.cars:
-            print('add car', car)
+        if not car in self.cars:
             self.cars.append(car)
-            print('all cars', self.cars)
+            print(f"Car added: {car.id} with speed {car.getSpeed()} m/s")
 
     # returns the current lane and all the other remaining lanes
     def getLanesLeft(self, distanceCovered: float):
