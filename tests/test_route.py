@@ -15,6 +15,13 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(route.getDistanceToLaneStart(l2, 50), 50)
         self.assertEqual(route.getDistanceToLaneStart(l3, 50), 150)
 
+    def test_getTotalDistance(self):
+        l1 = StraightLane(0,0,0,50,2)
+        l2 = StraightLane.continueLane(l1, 100)
+        l3 = StraightLane.continueLane(l2, 150)
+        route = Route([l1,l2,l3])
+        self.assertEqual(route.getTotalDistance(), 300)
+
     def test_getDistanceToTrafficlight(self):
         l1 = StraightLane(0,0,0,100,2)
         l2 = StraightLane.continueLane(l1, 100)
