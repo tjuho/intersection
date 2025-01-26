@@ -130,6 +130,7 @@ class Route:
             tl, dist = lane.getNextNonGreenTrafficlightAndDistance(0)
             if tl is not None:
                 return tl, dist + distance
+            distance += lane.length
         return None, None
 
     def getTotalDistance(self):
