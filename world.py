@@ -43,7 +43,7 @@ class World:
 
     def addRoute(self, route):
         if route not in self.routes:
-            self.routes.append()
+            self.routes.append(route)
 
     '''
     Adds traffic light to given lane. If the yellowtime is None then we calculate it from the lane's speed limit.
@@ -68,13 +68,7 @@ class World:
     def addCar(self, car: Car, route: Route):
         car.timeFromLastSpeedChange = -1e-10  # this is some bug fix
         car.maxSpeed = route.getSpeedLimit()
-        assert (route in self.routes.keys())
-        if 'cars' not in self.routes[route].keys():
-            self.routes[route]['cars'] = [car]
-        else:
-            cars = self.routes[route]['cars']
-            cars.append(car)
-            self.routes[route]['cars'] = cars
+        route.addCar(car)
 
     def calculateRouteDistanceFromLaneDistance(self, route, lane, distancefromlanestart):
         if lane not in route.lanes:
@@ -87,19 +81,14 @@ class World:
             result += tlane.length
         return result
 
-    def getOldestCar(self, route):
-        assert (route in self.routes.keys())
-        cars = self.routes[route]['cars']
-        if len(cars) > 0:
-            return self.routes[route]['cars'][0]
-        return None
-
     def getNewestCar(self, route):
-        assert (route in self.routes.keys())
-        cars = self.routes[route]['cars']
-        if len(cars) > 0:
-            return self.routes[route]['cars'][-1]
-        return None
+        minDistance = None
+        result = None
+        for car in route.cars:
+            if minDistance is None or minDistance > car.distance:
+                minDistance = car.distance
+                result = car
+        return result
 
     def removeCar(self, car: Car):
         for route in self.routes:
