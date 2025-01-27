@@ -15,14 +15,12 @@ class Simulation:
         self.world = World()
         self.ai = AI(self.world)
         self.trafficlightControllers = []
-        self.laneInputs = []
 
     def to_dict(self):
         return {
             "world": self.world.to_dict(),
             "ai": self.ai.to_dict(),
             "trafficlightControllers": [controller.to_dict() for controller in self.trafficlightControllers],
-            "laneInputs": self.laneInputs,
         }
 
     def moveTimestep(self, timestep):
@@ -63,11 +61,11 @@ class DummylightsTwoCrossings(Simulation):
         return base_dict
 
     def setup(self):
-        redtogreendelay = 3
-        yellowtime = 4
+        redtogreendelay = 9
+        yellowtime = 8
         inputsensorfromtrafficlight = 200
         outputsensorfromtrafficlight = 0
-        lanelength = 600
+        lanelength = 400
         trafficlightmargin = 3
         cx = lanelength * 0.5
         cy = lanelength * 0.5
@@ -123,7 +121,7 @@ class DummylightsTwoCrossings(Simulation):
 
     def setupSpawntimes(self):
         carsperminute = [25, 15]
-        avgspawnrate = 8
+        avgspawnrate = 7
         spawnValues = calculateCarSpawnDistribution(avgspawnrate, carsperminute, 6)
         routes = self.world.getRoutes()
         for route in routes:

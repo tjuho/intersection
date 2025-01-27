@@ -19,6 +19,7 @@ class Route:
         return {
             "id": self.id,
             "lanes": [lanes.to_dict() for lanes in self.lanes],
+            "cars": [car.to_dict() for car in self.cars],
             "totalTravelDistance": self.totalTravelDistance,
             "carSpawnRate": self.carSpawnRate,
             "carSpawnQueue": self.carSpawnQueue,
