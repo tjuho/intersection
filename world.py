@@ -14,8 +14,8 @@ class World:
             "id": self.id,
             "routes": [route.to_dict() for route in self.routes],
             "lanes": [lane.to_dict() for lane in self.getLanes()],
-            "trafficlightsLocationsAndDirections": self.getTrafficlightsLocationsAndDirections(),
-            "carsLocationsAndDirections": self.getCarsLocationsAndDirections(),
+            "trafficlightsLocationsAndDirections": [(tl.to_dict(),x, y, d) for tl,x, y, d in self.getTrafficlightsLocationsAndDirections()],
+            "carsLocationsAndDirections": [(c.to_dict(),x, y, d) for c,x, y, d in self.getCarsLocationsAndDirections()],
         }
 
     def moveTimestep(self, timestep):
