@@ -16,7 +16,7 @@ app.json_encoder = CustomJSONEncoder
 
 simulation = DummylightsTwoCrossings()
 
-@app.route('/api/render-data', methods=['GET'])
+@app.route('/intersection/api/render-data', methods=['GET'])
 def get_render_data():
     try:
         limit = int(request.args.get('limit', 100))
@@ -66,7 +66,7 @@ def get_render_data():
         app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
-@app.route('/api/simulation/update', methods=['POST'])
+@app.route('/intersection/api/update', methods=['POST'])
 def update_simulation():
     try:
         timestep = 0.2
@@ -77,7 +77,7 @@ def update_simulation():
         app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
-@app.route('/api/test', methods=['GET'])
+@app.route('/intersection/api/test', methods=['GET'])
 def test_endpoint():
     return jsonify({"status": "API is working!"}), 200
 
