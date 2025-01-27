@@ -14,15 +14,15 @@ class AI:
         self.id = str(uuid.uuid4())
         self.world = world
         self._carAiContainer = CarAIContainer()
-        self.debug = {}
-        self.debug['stack'] = {}
-        self.debug['stack']['last added'] = ''
+        # self.debug = {}
+        # self.debug['stack'] = {}
+        # self.debug['stack']['last added'] = ''
 
     def to_dict(self):
         return {
             "world": self.world.to_dict(),
-            "_carAiContainer": self._carAiContainer.to_dict(),
-            "debug": self.debug,
+            # "_carAiContainer": self._carAiContainer.to_dict(),
+            # "debug": self.debug,
         }
 
     def adjust(self):
@@ -83,7 +83,6 @@ class AI:
         if len(speedchangelist) > 0:
             minspeedchange = min(speedchangelist)
             car.addSpeedChanges(minspeedchange)
-            car.debug = self.debug['stack']['last added']
         if not (carahead is not None and distancetocarahead < reactiondistance) and not (
                 trafficlight is not None and distancetotrafficlightahead < reactiondistance):
             car.setSpeed(speedlimit, 0.2)
@@ -151,12 +150,12 @@ class AI:
         speedchange = SpeedChange(vi)
         if vt == vi and (math.isclose(vi * tt, dt + d, abs_tol=5e-3) or (d + dt < 0 and vt == 0)):
             speedchange.addAcceleration(0, tt)
-            self._addDebugProfileStackCount('no change 1')
+            # self._addDebugProfileStackCount('no change 1')
             return speedchange
 
         if vt == vi and d + dt < 0 and vt == 0:
             speedchange.addAcceleration(0, tt)
-            self._addDebugProfileStackCount('no change 2')
+            # self._addDebugProfileStackCount('no change 2')
             return speedchange
 
         vf = self._calculateFloorSpeed(vi, vt, d + dt, tt, ap, an)
@@ -166,7 +165,7 @@ class AI:
             t2 = (vt - vf) / ap
             speedchange.addAcceleration(an, t1)
             speedchange.addAcceleration(ap, t2, tt - t2)
-            self._addDebugProfileStackCount('_calculateFloorSpeed')
+            # self._addDebugProfileStackCount('_calculateFloorSpeed')
             return speedchange
 
         vr = self._calculateRoofSpeed(vi, vt, d + dt, tt, ap, an)
@@ -175,7 +174,7 @@ class AI:
             t2 = (vt - vr) / an
             speedchange.addAcceleration(ap, t1)
             speedchange.addAcceleration(an, t2, tt - t2)
-            self._addDebugProfileStackCount('_calculateRoofSpeed')
+            # self._addDebugProfileStackCount('_calculateRoofSpeed')
             return speedchange
 
         vm = self._calculateHighMidSpeed(vi, vt, dt + d, tt, ap, an)
@@ -185,7 +184,7 @@ class AI:
             tc = tt - t1 - t2
             speedchange.addAcceleration(ap, t1)
             speedchange.addAcceleration(an, t2, t1 + tc)
-            self._addDebugProfileStackCount('_calculateHighMidSpeed')
+            # self._addDebugProfileStackCount('_calculateHighMidSpeed')
             return speedchange
 
         vc = self._calculateMidSpeed(vi, vt, d + dt, tt, ap, an)
@@ -195,7 +194,7 @@ class AI:
             if tt <= t1 + t2:
                 speedchange.addAcceleration(ap, t1)
                 speedchange.addAcceleration(an, t2, t1)
-                self._addDebugProfileStackCount('_calculateMidSpeed')
+                # self._addDebugProfileStackCount('_calculateMidSpeed')
                 return speedchange
 
         tc = self._calculateSpeedLimitedConstantSpeedTime(vi, vt, vl, d + dt, tt, ap, an)
@@ -204,7 +203,7 @@ class AI:
             t2 = (vt - vl) / an
             speedchange.addAcceleration(ap, t1)
             speedchange.addAcceleration(an, t2, t1 + tc)
-            self._addDebugProfileStackCount('_calculateSpeedLimitedConstantSpeedTime')
+            # self._addDebugProfileStackCount('_calculateSpeedLimitedConstantSpeedTime')
             return speedchange
 
         vm, t1, t2 = self._calculateLowMidSpeedWithEqualAccelerations(vi, vt, d + dt, tt)
@@ -215,26 +214,26 @@ class AI:
             a2 = (vt - vm) / t2
             speedchange.addAcceleration(a1, t1)
             speedchange.addAcceleration(a2, t2, t1)
-            self._addDebugProfileStackCount('_calculateLowMidSpeedWithEqualAccelerations')
+            # self._addDebugProfileStackCount('_calculateLowMidSpeedWithEqualAccelerations')
             return speedchange
 
         items = self._calculateANASpeeditems(vi, vt, dt + d, tt)
         if items is not None:
             speedchange.addSpeedItems(items)
-            self._addDebugProfileStackCount('_calculateANASpeeditems')
+            # self._addDebugProfileStackCount('_calculateANASpeeditems')
             return speedchange
 
         items = self._calculateACASpeeditems(vi, vt, vl, d + dt, tt, ap, an)
         if items is not None:
             speedchange.addSpeedItems(items)
-            self._addDebugProfileStackCount('_calculateACASpeeditems')
+            # self._addDebugProfileStackCount('_calculateACASpeeditems')
             return speedchange
 
         t1 = self._calculateLinearAccelerationTime(vi, vt, dt + d, tt)
         if t1 is not None and t1 > 0 and (t1 >= tt or math.isclose(tt, t1, abs_tol=1e-3)):
             a = (vt - vi) / t1
             speedchange.addAcceleration(a, t1)
-            self._addDebugProfileStackCount('_calculateLinearAccelerationTime')
+            # self._addDebugProfileStackCount('_calculateLinearAccelerationTime')
             return speedchange
 
         a = ap if vt > vi else an
@@ -245,16 +244,16 @@ class AI:
             t3 = tt - t1 - t2
             if t3 > 0:
                 speedchange.addAcceleration(0, t3, t1 + t2)
-            self._addDebugProfileStackCount('_calculateTimeFromConstantSpeedToConstantAcceleration')
+            # self._addDebugProfileStackCount('_calculateTimeFromConstantSpeedToConstantAcceleration')
             return speedchange
 
         if (vt >= vl or math.isclose(vt, vl, abs_tol=1e-5)) and vi < vl:
             t1 = (vl - vi) / ap
             speedchange.addAcceleration(ap, t1)
-            self._addDebugProfileStackCount('vt >= vl')
+            # self._addDebugProfileStackCount('vt >= vl')
             return speedchange
 
-        self._addDebugProfileStackCount('no match no change')
+        # self._addDebugProfileStackCount('no match no change')
         return speedchange
 
     '''
@@ -559,11 +558,11 @@ class AI:
             startSpeed = speed
         return max, min
 
-    def _addDebugProfileStackCount(self, key):
-        if key not in self.debug['stack'].keys():
-            self.debug['stack'][key] = 0
-        self.debug['stack'][key] += 1
-        self.debug['stack']['last added'] = key
+    # def _addDebugProfileStackCount(self, key):
+    #     if key not in self.debug['stack'].keys():
+    #         self.debug['stack'][key] = 0
+    #     self.debug['stack'][key] += 1
+    #     self.debug['stack']['last added'] = key
 
 
 class CarAIContainer:
