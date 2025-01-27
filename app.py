@@ -1,9 +1,8 @@
 import json
-from flask import Flask, jsonify
-from flask_cors import CORS  # Import CORS
-from simulation import DummylightsTwoCrossings  # Your simulation file
-from trafficlight import Trafficlight
-import pdb
+import traceback
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from simulation import DummylightsTwoCrossings
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -17,66 +16,70 @@ app.json_encoder = CustomJSONEncoder
 
 simulation = DummylightsTwoCrossings()
 
-@app.route('/api/simulation', methods=['GET'])
-def get_simulation_data():
+@app.route('/api/render-data', methods=['GET'])
+def get_render_data():
     try:
-        # pdb.set_trace()  # Set a breakpoint
-        data = simulation.to_dict()
-        return jsonify(data)
-    except Exception as e:
-        app.logger.error(f"Error in get_simulation_data: {e}", exc_info=True)
-        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+        limit = int(request.args.get('limit', 100))
+        offset = int(request.args.get('offset', 0))
 
+        cars = [
+            {
+                "x": x,
+                "y": y,
+                "direction": d,
+                "color": car.color,
+                "width": car.width,
+                "length": car.length
+            }
+            for car, x, y, d in simulation.world.getCarsLocationsAndDirections()
+        ][offset:offset + limit]
+
+        traffic_lights = [
+            {
+                "x": x,
+                "y": y,
+                "direction": d,
+                "color": trafficlight.color
+            }
+            for trafficlight, x, y, d in simulation.world.getTrafficlightsLocationsAndDirections()
+        ][offset:offset + limit]
+
+        lanes = [
+            {
+                "startx": lane.startx,
+                "starty": lane.starty,
+                "endx": lane.endx,
+                "endy": lane.endy,
+                "width": lane.width,
+                "type": lane.type
+            }
+            for lane in simulation.world.getLanes()
+        ][offset:offset + limit]
+
+        return jsonify({
+            "cars": cars,
+            "traffic_lights": traffic_lights,
+            "lanes": lanes
+        })
+    except Exception as e:
+        app.logger.error(f"Error in get_render_data: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
 @app.route('/api/simulation/update', methods=['POST'])
 def update_simulation():
     try:
         timestep = 0.2
         simulation.moveTimestep(timestep)
-        return jsonify({"message": "Simulation updated", "timestep": timestep})
+        return jsonify({"message": "Simulation updated", "timestep": timestep}), 200
     except Exception as e:
-        app.logger.error(f"Error in update_simulation: {e}", exc_info=True)
+        app.logger.error(f"Error in update_simulation: {str(e)}")
+        app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
-# @app.route('/api/simulation', methods=['GET'])
-# def get_simulation_data():
-#     simulation = DummylightsTwoCrossings()  # Replace with your actual method to get the simulation
-#     simulation_dict = simulation.to_dict()
-#
-#     # Temporary debugging
-#     import pprint
-#     pprint.pprint(simulation_dict)
-#
-#     return jsonify(simulation_dict)
+@app.route('/api/test', methods=['GET'])
+def test_endpoint():
+    return jsonify({"status": "API is working!"}), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
-# @app.route('/api/simulation')
-# def get_simulation_data():
-#     traffic_light = {
-#         "color": "green",
-#         "timeToNextColorChange": None,
-#         "yellowTime": 1,
-#         "redToGreenDelay": 1
-#     }
-#     return jsonify(traffic_light)
-# @app.route('/api/simulation')
-# def get_simulation_data():
-#     simulation = DummylightsTwoCrossings()
-#     # Provide some simulation data (e.g., car locations, traffic lights, etc.)
-#     data = {
-#         'cars': simulation.world.getCarsLocationsAndDirections(),
-#         'traffic_lights': simulation.world.getTrafficlightsLocationsAndDirections(),
-#     }
-#     return jsonify(data)
-
-# @app.route('/api/simulation', methods=['GET'])
-# def get_simulation_data():
-#     # Example: Assuming `traffic_lights` is a list of Trafficlight objects
-#     traffic_lights = [Trafficlight("green", 1, 1), Trafficlight("red", 1, 1)]
-#
-#     # Convert each Trafficlight object to a dictionary
-#     data = [light.to_dict() for light in traffic_lights]
-#
-#     return jsonify(data)
+    app.run(host='0.0.0.0', port=5005, debug=True)
