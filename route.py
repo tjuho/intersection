@@ -32,7 +32,6 @@ class Route:
     def addCar(self, car):
         if not car in self.cars:
             self.cars.append(car)
-            print(f"Car added: {car.id} with speed {car.getSpeed()} m/s")
 
     # returns the current lane and all the other remaining lanes
     def getLanesLeft(self, distanceCovered: float):

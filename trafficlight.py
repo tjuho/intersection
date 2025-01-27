@@ -14,6 +14,7 @@ class Trafficlight:
             "timeToNextColorChange": self.timeToNextColorChange,
             "yellowTime": self.yellowTime,
             "redToGreenDelay": self.redToGreenDelay,
+            "distanceFromLaneStart": self.distanceFromLaneStart,
         }
 
     def turnRed(self):

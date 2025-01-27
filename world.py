@@ -3,18 +3,9 @@ from car import Car
 from route import Route
 from trafficlight import Trafficlight
 import uuid
-'''Stores all the stuff in the world'''
-
 
 class World:
     def __init__(self):
-        '''
-        Routes are stored this way:
-        Route: {
-        'cars': [Car],
-        'trafficlights': [(Trafficlight, distanceFromStart, (x,y,direction))],
-        'sensors': [(Sensor, distanceFromStart)]}
-        '''
         self.id = str(uuid.uuid4())
         self.routes = []
 
@@ -25,7 +16,6 @@ class World:
             "lanes": [lane.to_dict() for lane in self.getLanes()],
             "trafficlightsLocationsAndDirections": self.getTrafficlightsLocationsAndDirections(),
             "carsLocationsAndDirections": self.getCarsLocationsAndDirections(),
-            "sensorsFired": [sensor.to_dict() for sensor in self.sensorsFired],
         }
 
     def moveTimestep(self, timestep):
@@ -80,7 +70,6 @@ class World:
         for route in self.routes:
             if car in route.cars:
                 route.cars.remove(car)
-                print('remove car', car)
                 break
 
     def getCarRoute(self, car: Car):
@@ -100,40 +89,9 @@ class World:
             result.extend(route.lanes)
         return result
 
-    # def getSensorsLocations(self):
-    #     result = []
-    #     for route in self.routes.keys():
-    #         if 'sensors' not in self.routes[route].keys(): continue
-    #         sensors = self.routes[route]['sensors']
-    #         for sensor in sensors:
-    #             x, y, a = route.getLocationAndDirection(sensor.distance)
-    #             if x is None or y is None:
-    #                 print('problem with car', sensor)
-    #             else:
-    #                 result.append((sensor, x, y, a))
-    #     return result
-
     def getNextNonGreenTrafficlightAndDistance(self, car: Car):
         route = self.getCarRoute(car)
         return route.getNextNonGreenTrafficlightAndDistance(car.distance)
-
-    # def getNextNonGreenTrafficlightAndDistance(self, car: Car):
-    #     route = self.getCarRoute(car)
-    #     try:
-    #         distance = route.getCurrentLane(car.distance)
-    #         lanes = route.getLanesLeft(distance)
-    #         lanePosition = route.getCurrentLaneDistanceCovered(distance)
-    #         trafficlightitems = self.routes[route]['trafficlights']
-    #         distance = None
-    #         trafficlight = None
-    #         for tl, tld, _ in trafficlightitems:
-    #             delta = tld - car.distance
-    #             if delta >= 0 and (distance is None or distance > delta) and tl.color != 'green':
-    #                 distance = delta
-    #                 trafficlight = tl
-    #         return trafficlight, distance
-    #     except KeyError:
-    #         return None, None
 
     def getRoutesWithCommonLane(self, route: Route):
         result = []

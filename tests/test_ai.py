@@ -54,7 +54,7 @@ class MyTestCase(unittest.TestCase):
                             else:
                                 msg = f'\nvit={vit}\nvi={vi} \nvt={vt} \nvl={vl} \nd={d} \ndt={dt} \ntt={tt} \nap={ap} \nan={an}\n'
                                 self.assertGreaterEqual(d2+d, d1-1e-6, msg=msg+f'{ai.debug}')
-        print(ai.debug['stack'])
+        # print(ai.debug['stack'])
 
     def test_speedChageStackWithSingleArgs(self):
         world = World()
