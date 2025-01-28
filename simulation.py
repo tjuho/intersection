@@ -61,8 +61,8 @@ class DummylightsTwoCrossings(Simulation):
         return base_dict
 
     def setup(self):
-        redtogreendelay = 9
-        yellowtime = 8
+        redtogreendelay = 8
+        yellowtime = 10
         inputsensorfromtrafficlight = 200
         outputsensorfromtrafficlight = 0
         lanelength = 400
